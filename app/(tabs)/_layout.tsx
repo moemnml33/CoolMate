@@ -3,10 +3,10 @@ import React from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -32,7 +32,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Ionicons size={24} name={"home"} color={color} />
           ),
         }}
       />
@@ -41,11 +41,7 @@ export default function TabLayout() {
         options={{
           title: "Lists",
           tabBarIcon: ({ color }) => (
-            <IconSymbol
-              size={28}
-              name="list.bullet.clipboard.fill"
-              color={color}
-            />
+            <Ionicons size={24} name="list" color={color} />
           ),
         }}
       />
@@ -54,7 +50,7 @@ export default function TabLayout() {
         options={{
           title: "Calendar",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="calendar" color={color} />
+            <Ionicons size={24} name="calendar" color={color} />
           ),
         }}
       />
@@ -63,7 +59,7 @@ export default function TabLayout() {
         options={{
           title: "User",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.fill" color={color} />
+            <Ionicons size={24} name="person" color={color} />
           ),
         }}
       />
