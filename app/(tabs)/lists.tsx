@@ -3,12 +3,12 @@ import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-export default function CalendarScreen() {
+export default function ListsScreen() {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ThemedView style={styles.themedView}>
         <ThemedText type="title" style={styles.titleContainer}>
-          Calendar
+          Lists
         </ThemedText>
       </ThemedView>
     </SafeAreaView>

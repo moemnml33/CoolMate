@@ -3,12 +3,12 @@ import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-export default function ListScreen() {
+export default function UserScreen() {
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <ThemedView>
+      <ThemedView style={styles.themedView}>
         <ThemedText type="title" style={styles.titleContainer}>
-          List
+          User
         </ThemedText>
       </ThemedView>
     </SafeAreaView>
@@ -18,10 +18,9 @@ export default function ListScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     display: "flex",
-    backgroundColor: "white",
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
   },
+  themedView: { backgroundColor: "transparent" },
   titleContainer: {},
 });
