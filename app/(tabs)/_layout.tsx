@@ -7,6 +7,7 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -37,29 +38,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="lists"
+        name="expenses"
         options={{
-          title: "Lists",
+          title: "Expenses",
           tabBarIcon: ({ color }) => (
-            <Ionicons size={24} name="list" color={color} />
+            <Ionicons size={24} name={"cash"} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="calendar"
+        name="groceries"
         options={{
-          title: "Calendar",
+          title: "Groceries",
           tabBarIcon: ({ color }) => (
-            <Ionicons size={24} name="calendar" color={color} />
+            <Ionicons size={24} name={"bag"} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="user"
+        name="chores"
         options={{
-          title: "User",
+          title: "Chores",
           tabBarIcon: ({ color }) => (
-            <Ionicons size={24} name="person" color={color} />
+            <MaterialCommunityIcons
+              name="clipboard-check"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />

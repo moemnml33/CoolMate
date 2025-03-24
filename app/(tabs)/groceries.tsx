@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-export default function CalendarScreen() {
+export default function GroceriesScreen() {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ThemedView style={styles.themedView}>

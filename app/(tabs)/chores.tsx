@@ -3,12 +3,12 @@ import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-export default function UserScreen() {
+export default function ChoresScreen() {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ThemedView style={styles.themedView}>
         <ThemedText type="title" style={styles.titleContainer}>
-          User
+          Chores
         </ThemedText>
       </ThemedView>
     </SafeAreaView>
