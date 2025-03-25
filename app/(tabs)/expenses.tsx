@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     display: "flex",
     flex: 1,
-    alignItems: "center",
   },
   themedView: { backgroundColor: "transparent" },
   titleContainer: {},
