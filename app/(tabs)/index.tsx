@@ -1,16 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -25,40 +20,47 @@ export default function HomeScreen() {
       icon: "cash",
       iconLib: Ionicons,
       onPress: () => router.navigate("/expenses"),
-      backgroundColor: "#007AFF",
+      backgroundColor: "#17C3B2",
     },
     {
       title: "Chores",
       icon: "clipboard-check",
       iconLib: MaterialCommunityIcons,
       onPress: () => router.navigate("/chores"),
-      backgroundColor: "#000FFF",
+      backgroundColor: "#FFCB77",
     },
     {
       title: "Groceries",
       icon: "bag",
       iconLib: Ionicons,
       onPress: () => router.navigate("/groceries"),
-      backgroundColor: "#0F0F0F",
+      backgroundColor: "#FE6D73",
+    },
+    {
+      title: "Notes",
+      icon: "pushpin",
+      iconLib: AntDesign,
+      onPress: () => router.navigate("/groceries"),
+      backgroundColor: "#227C9D",
     },
   ];
 
   return (
     <SafeAreaView style={styles.mainContainer}>
       {/* Header Section: Greeting & Profile Icon */}
-      <View style={styles.headerContainer}>
-        <View>
-          <ThemedText type="subtitle">Hi, {user.name} 👋</ThemedText>
-          <Text style={styles.householdText}>{user.household}</Text>
-        </View>
-
-        {/* <Pressable onPress={() => router.navigate("/user")}> */}
-        <Pressable>
-          <Ionicons name="person-circle" size={44} />
-        </Pressable>
-      </View>
 
       <ScrollView>
+        <View style={styles.headerContainer}>
+          <View>
+            <ThemedText type="subtitle">Hi, {user.name} 👋</ThemedText>
+            <Text style={styles.householdText}>{user.household}</Text>
+          </View>
+
+          {/* <Pressable onPress={() => router.navigate("/user")}> */}
+          <Pressable>
+            <Ionicons name="person-circle" size={44} />
+          </Pressable>
+        </View>
         <ThemedText
           type="subtitle"
           style={{ paddingLeft: "4%", paddingTop: "3%" }}
