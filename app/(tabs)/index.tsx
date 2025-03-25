@@ -61,10 +61,7 @@ export default function HomeScreen() {
             <Ionicons name="person-circle" size={44} />
           </Pressable>
         </View>
-        <ThemedText
-          type="subtitle"
-          style={{ paddingLeft: "4%", paddingTop: "3%" }}
-        >
+        <ThemedText type="subtitle" style={styles.subtitles}>
           Quick Actions
         </ThemedText>
         <View style={styles.quickActionsContainer}>
@@ -89,6 +86,18 @@ export default function HomeScreen() {
               </View>
             )
           )}
+        </View>
+        <View>
+          <ThemedText type="subtitle" style={styles.subtitles}>
+            Sticky Notes
+          </ThemedText>
+          <Text>Coming soon...</Text>
+        </View>
+        <View>
+          <ThemedText type="subtitle" style={styles.subtitles}>
+            Overview
+          </ThemedText>
+          <Text>Coming soon...</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -141,4 +150,5 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.7,
   },
+  subtitles: { paddingLeft: "4%", paddingTop: "3%" },
 });
