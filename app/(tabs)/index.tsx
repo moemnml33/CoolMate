@@ -117,18 +117,18 @@ export default function HomeScreen() {
       backgroundColor: buttonsColors.expenses,
     },
     {
-      title: "Chores",
-      icon: "clipboard-check",
-      iconLib: MaterialCommunityIcons,
-      onPress: () => router.navigate("/chores"),
-      backgroundColor: buttonsColors.chores,
-    },
-    {
       title: "Groceries",
       icon: "bag",
       iconLib: Ionicons,
       onPress: () => router.navigate("/groceries"),
       backgroundColor: buttonsColors.groceries,
+    },
+    {
+      title: "Chores",
+      icon: "clipboard-check",
+      iconLib: MaterialCommunityIcons,
+      onPress: () => router.navigate("/chores"),
+      backgroundColor: buttonsColors.chores,
     },
     {
       title: "Notes",
@@ -166,8 +166,7 @@ export default function HomeScreen() {
           { backgroundColor: item.backgroundColor },
           pressed && styles.buttonPressed,
         ]}
-        onPress={item.onPress}
-      >
+        onPress={item.onPress}>
         <item.iconLib name={item.icon as any} size={24} color="white" />
       </Pressable>
       <Text style={{ paddingTop: 4 }}>{item.title}</Text>
@@ -183,8 +182,7 @@ export default function HomeScreen() {
             backgroundColor:
               buttonsColors[item.type as keyof typeof buttonsColors],
           },
-        ]}
-      >
+        ]}>
         {getIconComponent(item.icon)}
       </View>
       <ThemedText style={styles.overviewText}>{item.text}</ThemedText>
@@ -265,8 +263,7 @@ export default function HomeScreen() {
                       backgroundColor:
                         STICKYNOTESCOLORS[index % STICKYNOTESCOLORS.length],
                     },
-                  ]}
-                >
+                  ]}>
                   <Text style={styles.noteText}>{item.text}</Text>
                 </View>
               </View>
