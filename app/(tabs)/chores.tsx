@@ -1,41 +1,21 @@
 import { ThemedText } from "@/components/ThemedText";
+import { chores, colors } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Checkbox } from "@/components/ui/Checkbox";
-
-type Task = {
-  id: string;
-  title: string;
-  dueDate: string;
-  isToday: boolean;
-};
-
-const tasks: Task[] = [
-  { id: "1", title: "Do dishes", dueDate: "due by 3:30pm", isToday: true },
-  { id: "2", title: "Clean living room", dueDate: "due by 8:00pm", isToday: true },
-  { id: "3", title: "Take dog to vet", dueDate: "Tomorrow", isToday: false },
-  { id: "4", title: "Take out trash", dueDate: "In two days", isToday: false },
-  { id: "5", title: "Buy new sofa", dueDate: "No due date", isToday: false },
-];
+import { useTaskContext } from "@/contexts/TaskContext";
 
 export default function ChoresScreen() {
-  const [completedTasks, setCompletedTasks] = useState<{ [key: string]: boolean }>({});
+  const { completedTasks, toggleTask } = useTaskContext();
 
-  const toggleTask = (taskId: string) => {
-    setCompletedTasks(prev => ({
-      ...prev,
-      [taskId]: !prev[taskId]
-    }));
-  };
-
-  const renderTask = (task: Task) => (
+  const renderTask = (task: typeof chores.tasks[0]) => (
     <View key={task.id} style={[styles.taskCard, !task.isToday && styles.upcomingTask]}>
       <View style={styles.taskLeft}>
         <Checkbox
           checked={completedTasks[task.id] || false}
           onPress={() => toggleTask(task.id)}
-          color="#FFCB77"
+          color={colors.chores}
         />
         <View>
           <ThemedText style={styles.taskTitle}>{task.title}</ThemedText>
@@ -51,8 +31,8 @@ export default function ChoresScreen() {
     </View>
   );
 
-  const todayTasks = tasks.filter(task => task.isToday);
-  const upcomingTasks = tasks.filter(task => !task.isToday);
+  const todayTasks = chores.tasks.filter(task => task.isToday);
+  const upcomingTasks = chores.tasks.filter(task => !task.isToday);
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -60,7 +40,7 @@ export default function ChoresScreen() {
         <View style={styles.header}>
           <ThemedText type="title">Chores</ThemedText>
           <Pressable style={styles.addButton}>
-            <Ionicons name="add" size={24} color="#FFCB77" />
+            <Ionicons name="add" size={24} color={colors.chores} />
           </Pressable>
         </View>
 

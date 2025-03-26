@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ExpenseCard } from "@/components/expenses/ExpenseCard";
+import { expenses, colors } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
@@ -12,18 +13,18 @@ export default function ExpensesScreen() {
         <View style={styles.header}>
           <ThemedText type="title">Expenses</ThemedText>
           <Pressable style={styles.addButton}>
-            <Ionicons name="add" size={24} color="#17C3B2" />
+            <Ionicons name="add" size={24} color={colors.expenses} />
           </Pressable>
         </View>
 
         <View style={styles.balanceContainer}>
-          <View style={[styles.balanceCard, { backgroundColor: "#17C3B2" }]}>
+          <View style={[styles.balanceCard, { backgroundColor: colors.expenses }]}>
             <ThemedText style={[styles.balanceLabel, { color: "white" }]}>You owe</ThemedText>
-            <ThemedText type="subtitle" style={{ color: "white" }}>$413.50</ThemedText>
+            <ThemedText type="subtitle" style={{ color: "white" }}>${expenses.balances.youOwe}</ThemedText>
           </View>
-          <View style={[styles.balanceCard, { backgroundColor: "#17C3B2" }]}>
+          <View style={[styles.balanceCard, { backgroundColor: colors.expenses }]}>
             <ThemedText style={[styles.balanceLabel, { color: "white" }]}>You are owed</ThemedText>
-            <ThemedText type="subtitle" style={{ color: "white" }}>$55.60</ThemedText>
+            <ThemedText type="subtitle" style={{ color: "white" }}>${expenses.balances.youAreOwed}</ThemedText>
           </View>
         </View>
 
@@ -31,38 +32,31 @@ export default function ExpensesScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Shared Expenses
           </ThemedText>
-          <ExpenseCard
-            type="shared"
-            title="Rent Bill"
-            amount="1200"
-            dueDate="3 days"
-            paidCount="2/3"
-          />
-          <ExpenseCard
-            type="shared"
-            title="Electricity Bill"
-            amount="300"
-            dueDate="one month"
-            paidCount="0/3"
-          />
+          {expenses.shared.map(expense => (
+            <ExpenseCard
+              key={expense.id}
+              type="shared"
+              title={expense.title}
+              amount={expense.amount}
+              dueDate={expense.dueDate}
+              paidCount={expense.paidCount}
+            />
+          ))}
         </View>
 
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Pending Payments
           </ThemedText>
-          <ExpenseCard
-            type="pending"
-            title="Pizza night"
-            amount="13.50"
-            ownerInfo="You owe Jessica"
-          />
-          <ExpenseCard
-            type="pending"
-            title="Gas"
-            amount="55.60"
-            ownerInfo="Mark owes you"
-          />
+          {expenses.pending.map(expense => (
+            <ExpenseCard
+              key={expense.id}
+              type="pending"
+              title={expense.title}
+              amount={expense.amount}
+              ownerInfo={expense.ownerInfo}
+            />
+          ))}
         </View>
 
         <Pressable style={styles.resolvedButton}>

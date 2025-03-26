@@ -1,4 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
+import {
+  user,
+  overview,
+  notes,
+  colors,
+  icons,
+  chores,
+  groceries,
+} from "@/data/data";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -15,6 +24,7 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { useTaskContext } from "@/contexts/TaskContext";
 
 const STICKYNOTESCOLORS = [
   "#FBF8CC",
@@ -35,13 +45,6 @@ const stickyNotes = [
   { id: "3", text: "Pay electricity bill" },
   { id: "4", text: "Call mom" },
 ];
-
-const icons = {
-  chores: "clipboard-check",
-  expenses: "cash",
-  groceries: "bag",
-  notes: "pushpin",
-};
 
 const buttonsColors = {
   expenses: "#17C3B2",
@@ -71,12 +74,6 @@ const todaysOverview = [
   },
 ];
 
-const user = {
-  name: "Alex",
-  household: "The Smith Family",
-};
-
-// New mock data for Pending Payments and Grocery Items
 const pendingPayments = [
   {
     id: "1",
@@ -107,35 +104,66 @@ const groceryItems = [
 export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
+  const { completedTasks, checkedGroceries } = useTaskContext();
+
+  // Calculate actual counts
+  const todayChoresCount = chores.tasks.filter(
+    (task) => task.isToday && !completedTasks[task.id]
+  ).length;
+
+  const uncheckedGroceriesCount = groceries.items.filter(
+    (item) => !checkedGroceries[item]
+  ).length;
+
+  const todaysOverview = [
+    {
+      id: "1",
+      text: `You have ${todayChoresCount} chores to do today`,
+      icon: icons.chores,
+      type: "chores",
+    },
+    {
+      id: "2",
+      text: "You have 2 expenses to log",
+      icon: icons.expenses,
+      type: "expenses",
+    },
+    {
+      id: "3",
+      text: `You have ${uncheckedGroceriesCount} grocery items to buy`,
+      icon: icons.groceries,
+      type: "groceries",
+    },
+  ];
 
   const quickActionButtons = [
     {
       title: "Expenses",
-      icon: "cash",
+      icon: icons.expenses,
       iconLib: Ionicons,
       onPress: () => router.navigate("/expenses"),
-      backgroundColor: buttonsColors.expenses,
+      backgroundColor: colors.expenses,
     },
     {
       title: "Groceries",
-      icon: "bag",
+      icon: icons.groceries,
       iconLib: Ionicons,
       onPress: () => router.navigate("/groceries"),
-      backgroundColor: buttonsColors.groceries,
+      backgroundColor: colors.groceries,
     },
     {
       title: "Chores",
-      icon: "clipboard-check",
+      icon: icons.chores,
       iconLib: MaterialCommunityIcons,
       onPress: () => router.navigate("/chores"),
-      backgroundColor: buttonsColors.chores,
+      backgroundColor: colors.chores,
     },
     {
       title: "Notes",
-      icon: "pushpin",
+      icon: icons.notes,
       iconLib: AntDesign,
       onPress: () => router.navigate("/groceries"),
-      backgroundColor: buttonsColors.notes,
+      backgroundColor: colors.notes,
     },
   ];
 
@@ -189,7 +217,6 @@ export default function HomeScreen() {
     </View>
   );
 
-  // New render functions for Payments and Grocery widgets
   const renderPaymentItem = ({ item }: any) => (
     <View style={styles.widgetItem}>
       <View style={styles.widgetItemLeft}>
@@ -215,8 +242,10 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.headerContainer}>
           <View>
-            <ThemedText type="subtitle">Hi, {user.name} 👋</ThemedText>
-            <Text style={styles.householdText}>{user.household}</Text>
+            <ThemedText type="title">Hi {user.name}</ThemedText>
+            <ThemedText style={styles.householdText}>
+              {user.household}
+            </ThemedText>
           </View>
           <Pressable>
             <Ionicons name="person-circle" size={44} />
@@ -253,7 +282,7 @@ export default function HomeScreen() {
             width={width}
             height={width / 2}
             autoPlay={false}
-            data={stickyNotes}
+            data={notes.items}
             renderItem={({ index, item }) => (
               <View style={styles.carouselItemContainer}>
                 <View
@@ -427,7 +456,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
-  // New styles for two-widget layout
   twoWidgetsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
