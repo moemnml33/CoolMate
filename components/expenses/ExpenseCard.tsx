@@ -21,6 +21,21 @@ export function ExpenseCard({
   ownerInfo,
   type,
 }: ExpenseCardProps) {
+  const [paid, total] = (paidCount || "").split("/").map(Number);
+
+  const renderProgressBars = () => {
+    return Array.from({ length: total || 0 }).map((_, index) => (
+      <View
+        key={index}
+        style={[
+          styles.progressBar,
+          index < paid ? styles.progressBarFilled : styles.progressBarEmpty,
+          index !== total - 1 && styles.progressBarMargin,
+        ]}
+      />
+    ));
+  };
+
   return (
     <ThemedView style={styles.card}>
       <View style={styles.mainContent}>
@@ -30,15 +45,20 @@ export function ExpenseCard({
         </View>
         
         {type === "shared" && (
-          <View style={styles.detailsRow}>
-            <View style={styles.dueDate}>
-              <Ionicons name="calendar" size={16} color="#17C3B2" />
-              <ThemedText style={styles.smallText}>
-                due in {dueDate}
-              </ThemedText>
+          <>
+            <View style={styles.progressBarContainer}>
+              {renderProgressBars()}
             </View>
-            <ThemedText style={styles.smallText}>{paidCount} paid</ThemedText>
-          </View>
+            <View style={styles.detailsRow}>
+              <View style={styles.dueDate}>
+                <Ionicons name="calendar" size={16} color="#17C3B2" />
+                <ThemedText style={styles.smallText}>
+                  due in {dueDate}
+                </ThemedText>
+              </View>
+              <ThemedText style={styles.smallText}>{paidCount} paid</ThemedText>
+            </View>
+          </>
         )}
 
         {type === "pending" && ownerInfo && (
@@ -87,5 +107,24 @@ const styles = StyleSheet.create({
   smallText: {
     fontSize: 14,
     color: "#687076",
+  },
+  progressBarContainer: {
+    flexDirection: "row",
+    height: 2,
+    marginVertical: 8,
+  },
+  progressBar: {
+    flex: 1,
+    height: "100%",
+    borderRadius: 1,
+  },
+  progressBarFilled: {
+    backgroundColor: "#17C3B2",
+  },
+  progressBarEmpty: {
+    backgroundColor: "#E8F8F7",
+  },
+  progressBarMargin: {
+    marginRight: 4,
   },
 }); 
