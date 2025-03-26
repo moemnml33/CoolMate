@@ -130,7 +130,7 @@ export default function HomeScreen() {
     }
   };
 
-  const renderQuickActionItem = ({ item, index }) => (
+  const renderQuickActionItem = ({ item }: any) => (
     <View style={{ alignItems: "center" }}>
       <Pressable
         style={({ pressed }) => [
@@ -146,7 +146,7 @@ export default function HomeScreen() {
     </View>
   );
 
-  const renderOverviewItem = ({ item }) => (
+  const renderOverviewItem = ({ item }: any) => (
     <View style={styles.overviewItem}>
       <View
         style={[
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: "2%",
-    paddingBottom: "3%",
+    paddingBottom: "2%",
     borderBottomColor: "#DDD",
   },
   householdText: {
@@ -269,8 +269,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     width: "100%",
     alignSelf: "center",
-    marginTop: "2%",
-    paddingVertical: "4%",
+    marginTop: "1%",
+    paddingVertical: "3%",
     backgroundColor: "white",
     borderRadius: 18,
     shadowColor: "#000",
