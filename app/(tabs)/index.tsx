@@ -4,11 +4,34 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Dimensions,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import Carousel from "react-native-reanimated-carousel";
+
+const STICKYNOTESCOLORS = [
+  "#FBF8CC",
+  "#FDE4CF",
+  "#FFCFD2",
+  "#F1C0E8",
+  "#CFBAF0",
+  "#A3C4F3",
+  "#90DBF4",
+  "#8EECF5",
+  "#98F5E1",
+  "#B9FBC0",
+];
 
 export default function HomeScreen() {
   const router = useRouter();
+  const width = Dimensions.get("window").width;
+
   const user = {
     name: "Alex",
     household: "The Smith Family",
@@ -45,18 +68,21 @@ export default function HomeScreen() {
     },
   ];
 
+  const stickyNotes = [
+    { id: "1", text: "Buy milk and eggs" },
+    { id: "2", text: "Schedule dentist appointment" },
+    { id: "3", text: "Pay electricity bill" },
+    { id: "4", text: "Call mom" },
+  ];
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      {/* Header Section: Greeting & Profile Icon */}
-
       <ScrollView>
         <View style={styles.headerContainer}>
           <View>
             <ThemedText type="subtitle">Hi, {user.name} 👋</ThemedText>
             <Text style={styles.householdText}>{user.household}</Text>
           </View>
-
-          {/* <Pressable onPress={() => router.navigate("/user")}> */}
           <Pressable>
             <Ionicons name="person-circle" size={44} />
           </Pressable>
@@ -91,7 +117,36 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={styles.subtitles}>
             Sticky Notes
           </ThemedText>
-          <Text>Coming soon...</Text>
+          <Carousel
+            mode={"horizontal-stack"}
+            modeConfig={{
+              snapDirection: "left",
+              stackInterval: 18,
+            }}
+            autoPlayInterval={2000}
+            pagingEnabled={true}
+            snapEnabled={true}
+            loop={true}
+            width={width}
+            height={width / 2}
+            autoPlay={false}
+            data={stickyNotes}
+            renderItem={({ index, item }) => (
+              <View style={styles.carouselItemContainer}>
+                <View
+                  style={[
+                    styles.stickyNote,
+                    {
+                      backgroundColor:
+                        STICKYNOTESCOLORS[index % STICKYNOTESCOLORS.length],
+                    },
+                  ]}
+                >
+                  <Text style={styles.noteText}>{item.text}</Text>
+                </View>
+              </View>
+            )}
+          />
         </View>
         <View>
           <ThemedText type="subtitle" style={styles.subtitles}>
@@ -107,7 +162,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: "white",
   },
   headerContainer: {
     flexDirection: "row",
@@ -117,8 +171,6 @@ const styles = StyleSheet.create({
     paddingTop: "2%",
     paddingBottom: "3%",
     borderBottomColor: "#DDD",
-    // borderBottomWidth: 1,
-    // backgroundColor: "white",
   },
   householdText: {
     paddingTop: 4,
@@ -132,15 +184,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: "2%",
     paddingVertical: 10,
-    // backgroundColor: "white",
-    // borderRadius: 18,
-    // shadowColor: "#000",
-    // shadowOpacity: 0.1,
-    // shadowRadius: 1,
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 0,
-    // },
   },
   button: {
     padding: 16,
@@ -150,5 +193,30 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.7,
   },
-  subtitles: { paddingLeft: "4%", paddingTop: "3%" },
+  subtitles: {
+    paddingHorizontal: "4%",
+    paddingVertical: "3%",
+  },
+  carouselItemContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stickyNote: {
+    width: "70%",
+    height: "90%",
+    padding: 16,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    justifyContent: "center",
+  },
+  noteText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
 });
