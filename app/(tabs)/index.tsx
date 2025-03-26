@@ -28,6 +28,13 @@ const STICKYNOTESCOLORS = [
   "#B9FBC0",
 ];
 
+const stickyNotes = [
+  { id: "1", text: "Buy milk and eggs" },
+  { id: "2", text: "Schedule dentist appointment" },
+  { id: "3", text: "Pay electricity bill" },
+  { id: "4", text: "Call mom" },
+];
+
 export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
@@ -68,13 +75,6 @@ export default function HomeScreen() {
     },
   ];
 
-  const stickyNotes = [
-    { id: "1", text: "Buy milk and eggs" },
-    { id: "2", text: "Schedule dentist appointment" },
-    { id: "3", text: "Pay electricity bill" },
-    { id: "4", text: "Call mom" },
-  ];
-
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView>
@@ -87,33 +87,36 @@ export default function HomeScreen() {
             <Ionicons name="person-circle" size={44} />
           </Pressable>
         </View>
-        <ThemedText type="subtitle" style={styles.subtitles}>
-          Quick Actions
-        </ThemedText>
-        <View style={styles.quickActionsContainer}>
-          {quickActionButtons.map(
-            (
-              { title, icon, iconLib: IconLib, onPress, backgroundColor },
-              index
-            ) => (
-              <View key={index} style={{ alignItems: "center" }}>
-                <Pressable
-                  key={index}
-                  style={({ pressed }) => [
-                    styles.button,
-                    { backgroundColor },
-                    pressed && styles.buttonPressed,
-                  ]}
-                  onPress={onPress}
-                >
-                  <IconLib name={icon as any} size={24} color="white" />
-                </Pressable>
-                <Text style={{ paddingTop: 4 }}>{title}</Text>
-              </View>
-            )
-          )}
+
+        <View style={styles.container}>
+          <ThemedText type="subtitle" style={styles.subtitles}>
+            Quick Actions
+          </ThemedText>
+          <View style={styles.quickActionsContainer}>
+            {quickActionButtons.map(
+              (
+                { title, icon, iconLib: IconLib, onPress, backgroundColor },
+                index
+              ) => (
+                <View key={index} style={{ alignItems: "center" }}>
+                  <Pressable
+                    key={index}
+                    style={({ pressed }) => [
+                      styles.button,
+                      { backgroundColor },
+                      pressed && styles.buttonPressed,
+                    ]}
+                    onPress={onPress}
+                  >
+                    <IconLib name={icon as any} size={24} color="white" />
+                  </Pressable>
+                  <Text style={{ paddingTop: 4 }}>{title}</Text>
+                </View>
+              )
+            )}
+          </View>
         </View>
-        <View>
+        <View style={styles.container}>
           <ThemedText type="subtitle" style={styles.subtitles}>
             Sticky Notes
           </ThemedText>
@@ -148,9 +151,9 @@ export default function HomeScreen() {
             )}
           />
         </View>
-        <View>
+        <View style={styles.container}>
           <ThemedText type="subtitle" style={styles.subtitles}>
-            Overview
+            Today's Overview
           </ThemedText>
           <Text>Coming soon...</Text>
         </View>
@@ -162,6 +165,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+  },
+  container: {
+    paddingHorizontal: "4%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -183,7 +189,16 @@ const styles = StyleSheet.create({
     width: "95%",
     alignSelf: "center",
     marginTop: "2%",
-    paddingVertical: 10,
+    paddingVertical: "4%",
+    // backgroundColor: "white",
+    // borderRadius: 18,
+    // shadowColor: "#000",
+    // shadowOpacity: 0.1,
+    // shadowRadius: 1,
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 0,
+    // },
   },
   button: {
     padding: 16,
@@ -194,7 +209,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   subtitles: {
-    paddingHorizontal: "4%",
+    // paddingHorizontal: "4%",
     paddingVertical: "3%",
   },
   carouselItemContainer: {
@@ -204,7 +219,7 @@ const styles = StyleSheet.create({
   },
   stickyNote: {
     width: "70%",
-    height: "90%",
+    height: "85%",
     padding: 16,
     borderRadius: 10,
     shadowColor: "#000",
