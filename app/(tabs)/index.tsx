@@ -159,7 +159,7 @@ export default function HomeScreen() {
       >
         {getIconComponent(item.icon)}
       </View>
-      <Text style={styles.overviewText}>{item.text}</Text>
+      <ThemedText style={styles.overviewText}>{item.text}</ThemedText>
     </View>
   );
 
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: "1%",
     paddingVertical: "3%",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     borderRadius: 18,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   overviewContainer: {
     padding: "3%",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     borderRadius: 18,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -342,7 +342,6 @@ const styles = StyleSheet.create({
   },
   overviewText: {
     fontSize: 16,
-    color: "#333",
     flex: 1,
   },
 });
