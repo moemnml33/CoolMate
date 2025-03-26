@@ -76,6 +76,34 @@ const user = {
   household: "The Smith Family",
 };
 
+// New mock data for Pending Payments and Grocery Items
+const pendingPayments = [
+  {
+    id: "1",
+    description: "Spotify",
+    amount: "$9.99",
+    dueDate: "Apr 15",
+  },
+  {
+    id: "2",
+    description: "Netflix",
+    amount: "$15.49",
+    dueDate: "Apr 20",
+  },
+  {
+    id: "3",
+    description: "Internet Bill",
+    amount: "$69.99",
+    dueDate: "Apr 25",
+  },
+];
+
+const groceryItems = [
+  { id: "1", item: "Milk", quantity: "1 gallon", category: "Dairy" },
+  { id: "2", item: "Bread", quantity: "1 loaf", category: "Bakery" },
+  { id: "3", item: "Eggs", quantity: "1 dozen", category: "Dairy" },
+];
+
 export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
@@ -163,9 +191,30 @@ export default function HomeScreen() {
     </View>
   );
 
+  // New render functions for Payments and Grocery widgets
+  const renderPaymentItem = ({ item }: any) => (
+    <View style={styles.widgetItem}>
+      <View style={styles.widgetItemLeft}>
+        <Text style={styles.widgetItemDescription}>{item.description}</Text>
+        <Text style={styles.widgetItemSubtext}>Due: {item.dueDate}</Text>
+      </View>
+      <Text style={styles.widgetItemAmount}>{item.amount}</Text>
+    </View>
+  );
+
+  const renderGroceryItem = ({ item }: any) => (
+    <View style={styles.widgetItem}>
+      <View style={styles.widgetItemLeft}>
+        <Text style={styles.widgetItemDescription}>{item.item}</Text>
+        <Text style={styles.widgetItemSubtext}>{item.category}</Text>
+      </View>
+      <Text style={styles.widgetItemAmount}>{item.quantity}</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <ScrollView>
+      <ScrollView style={styles.scrollContainer}>
         <View style={styles.headerContainer}>
           <View>
             <ThemedText type="subtitle">Hi, {user.name} 👋</ThemedText>
@@ -239,6 +288,40 @@ export default function HomeScreen() {
             )}
           />
         </View>
+        <View style={styles.twoWidgetsContainer}>
+          <View style={styles.halfWidget}>
+            <ThemedText type="subtitle" style={styles.subtitles}>
+              Pending Payments
+            </ThemedText>
+            <View style={styles.widgetContentContainer}>
+              <FlatList
+                data={pendingPayments}
+                renderItem={renderPaymentItem}
+                keyExtractor={(item) => item.id}
+                scrollEnabled={false}
+                ItemSeparatorComponent={() => (
+                  <View style={styles.overviewSeparator} />
+                )}
+              />
+            </View>
+          </View>
+          <View style={styles.halfWidget}>
+            <ThemedText type="subtitle" style={styles.subtitles}>
+              Grocery Items
+            </ThemedText>
+            <View style={styles.widgetContentContainer}>
+              <FlatList
+                data={groceryItems}
+                renderItem={renderGroceryItem}
+                keyExtractor={(item) => item.id}
+                scrollEnabled={false}
+                ItemSeparatorComponent={() => (
+                  <View style={styles.overviewSeparator} />
+                )}
+              />
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -247,6 +330,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+  },
+  scrollContainer: {
+    marginBottom: "10%",
   },
   container: {
     paddingHorizontal: "4%",
@@ -271,7 +357,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: "1%",
     paddingVertical: "3%",
-    // backgroundColor: "white",
+    backgroundColor: "white",
     borderRadius: 18,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -290,7 +376,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   subtitles: {
-    paddingVertical: "3%",
+    paddingVertical: "4%",
   },
   carouselItemContainer: {
     width: "100%",
@@ -316,7 +402,7 @@ const styles = StyleSheet.create({
   },
   overviewContainer: {
     padding: "3%",
-    // backgroundColor: "white",
+    backgroundColor: "white",
     borderRadius: 18,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -329,7 +415,7 @@ const styles = StyleSheet.create({
   overviewItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: "3%",
+    paddingVertical: "2%",
   },
   overviewSeparator: {
     height: 1,
@@ -343,5 +429,50 @@ const styles = StyleSheet.create({
   overviewText: {
     fontSize: 16,
     flex: 1,
+  },
+  // New styles for two-widget layout
+  twoWidgetsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: "4%",
+    paddingVertical: "4%",
+  },
+  halfWidget: {
+    width: "48%",
+  },
+  widgetContentContainer: {
+    backgroundColor: "white",
+    borderRadius: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    padding: "4%",
+    marginTop: "3%",
+  },
+  widgetItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: "4%",
+    paddingHorizontal: "4%",
+  },
+  widgetItemLeft: {
+    flex: 1,
+  },
+  widgetItemDescription: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  widgetItemSubtext: {
+    fontSize: 12,
+    color: "#666",
+  },
+  widgetItemAmount: {
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
