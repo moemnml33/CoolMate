@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import {
   Dimensions,
+  FlatList,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -35,14 +36,49 @@ const stickyNotes = [
   { id: "4", text: "Call mom" },
 ];
 
+const icons = {
+  chores: "clipboard-check",
+  expenses: "cash",
+  groceries: "bag",
+  notes: "pushpin",
+};
+
+const buttonsColors = {
+  expenses: "#17C3B2",
+  chores: "#FFCB77",
+  groceries: "#FE6D73",
+  notes: "#227C9D",
+};
+
+const todaysOverview = [
+  {
+    id: "1",
+    text: "You have 3 chores to do today",
+    icon: icons.chores,
+    type: "chores",
+  },
+  {
+    id: "2",
+    text: "You have 2 expenses to log",
+    icon: icons.expenses,
+    type: "expenses",
+  },
+  {
+    id: "3",
+    text: "You have 1 grocery item to buy",
+    icon: icons.groceries,
+    type: "groceries",
+  },
+];
+
+const user = {
+  name: "Alex",
+  household: "The Smith Family",
+};
+
 export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
-
-  const user = {
-    name: "Alex",
-    household: "The Smith Family",
-  };
 
   const quickActionButtons = [
     {
@@ -50,30 +86,82 @@ export default function HomeScreen() {
       icon: "cash",
       iconLib: Ionicons,
       onPress: () => router.navigate("/expenses"),
-      backgroundColor: "#17C3B2",
+      backgroundColor: buttonsColors.expenses,
     },
     {
       title: "Chores",
       icon: "clipboard-check",
       iconLib: MaterialCommunityIcons,
       onPress: () => router.navigate("/chores"),
-      backgroundColor: "#FFCB77",
+      backgroundColor: buttonsColors.chores,
     },
     {
       title: "Groceries",
       icon: "bag",
       iconLib: Ionicons,
       onPress: () => router.navigate("/groceries"),
-      backgroundColor: "#FE6D73",
+      backgroundColor: buttonsColors.groceries,
     },
     {
       title: "Notes",
       icon: "pushpin",
       iconLib: AntDesign,
       onPress: () => router.navigate("/groceries"),
-      backgroundColor: "#227C9D",
+      backgroundColor: buttonsColors.notes,
     },
   ];
+
+  const getIconComponent = (icon: string) => {
+    switch (icon) {
+      case icons.chores:
+        return (
+          <MaterialCommunityIcons
+            name="clipboard-check"
+            size={24}
+            color="white"
+          />
+        );
+      case icons.expenses:
+        return <Ionicons name="cash" size={24} color="white" />;
+      case icons.groceries:
+        return <Ionicons name="bag" size={24} color="white" />;
+      default:
+        return null;
+    }
+  };
+
+  const renderQuickActionItem = ({ item, index }) => (
+    <View style={{ alignItems: "center" }}>
+      <Pressable
+        style={({ pressed }) => [
+          styles.button,
+          { backgroundColor: item.backgroundColor },
+          pressed && styles.buttonPressed,
+        ]}
+        onPress={item.onPress}
+      >
+        <item.iconLib name={item.icon as any} size={24} color="white" />
+      </Pressable>
+      <Text style={{ paddingTop: 4 }}>{item.title}</Text>
+    </View>
+  );
+
+  const renderOverviewItem = ({ item }) => (
+    <View style={styles.overviewItem}>
+      <View
+        style={[
+          styles.overviewIconContainer,
+          {
+            backgroundColor:
+              buttonsColors[item.type as keyof typeof buttonsColors],
+          },
+        ]}
+      >
+        {getIconComponent(item.icon)}
+      </View>
+      <Text style={styles.overviewText}>{item.text}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -92,29 +180,14 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={styles.subtitles}>
             Quick Actions
           </ThemedText>
-          <View style={styles.quickActionsContainer}>
-            {quickActionButtons.map(
-              (
-                { title, icon, iconLib: IconLib, onPress, backgroundColor },
-                index
-              ) => (
-                <View key={index} style={{ alignItems: "center" }}>
-                  <Pressable
-                    key={index}
-                    style={({ pressed }) => [
-                      styles.button,
-                      { backgroundColor },
-                      pressed && styles.buttonPressed,
-                    ]}
-                    onPress={onPress}
-                  >
-                    <IconLib name={icon as any} size={24} color="white" />
-                  </Pressable>
-                  <Text style={{ paddingTop: 4 }}>{title}</Text>
-                </View>
-              )
-            )}
-          </View>
+          <FlatList
+            data={quickActionButtons}
+            renderItem={renderQuickActionItem}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickActionsContainer}
+          />
         </View>
         <View style={styles.container}>
           <ThemedText type="subtitle" style={styles.subtitles}>
@@ -155,7 +228,16 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={styles.subtitles}>
             Today's Overview
           </ThemedText>
-          <Text>Coming soon...</Text>
+          <FlatList
+            data={todaysOverview}
+            renderItem={renderOverviewItem}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            contentContainerStyle={styles.overviewContainer}
+            ItemSeparatorComponent={() => (
+              <View style={styles.overviewSeparator} />
+            )}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -184,21 +266,20 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   quickActionsContainer: {
-    flexDirection: "row",
     justifyContent: "space-around",
-    width: "95%",
+    width: "100%",
     alignSelf: "center",
     marginTop: "2%",
     paddingVertical: "4%",
-    // backgroundColor: "white",
-    // borderRadius: 18,
-    // shadowColor: "#000",
-    // shadowOpacity: 0.1,
-    // shadowRadius: 1,
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 0,
-    // },
+    backgroundColor: "white",
+    borderRadius: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
   },
   button: {
     padding: 16,
@@ -209,7 +290,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   subtitles: {
-    // paddingHorizontal: "4%",
     paddingVertical: "3%",
   },
   carouselItemContainer: {
@@ -233,5 +313,36 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
+  },
+  overviewContainer: {
+    padding: "3%",
+    backgroundColor: "white",
+    borderRadius: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+  },
+  overviewItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: "3%",
+  },
+  overviewSeparator: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+  },
+  overviewIconContainer: {
+    borderRadius: 50,
+    padding: 10,
+    marginRight: 15,
+  },
+  overviewText: {
+    fontSize: 16,
+    color: "#333",
+    flex: 1,
   },
 });
