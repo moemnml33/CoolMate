@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState } from 'react';
-import { groceries, chores, expenses } from '@/data/data';
+import { groceries, chores, expenses, notes as initialNotes } from '@/data/data';
+
+type Note = {
+  id: string;
+  text: string;
+};
 
 type TaskContextType = {
   completedTasks: { [key: string]: boolean };
@@ -16,6 +21,9 @@ type TaskContextType = {
   addChore: (task: typeof chores.tasks[0]) => void;
   addExpense: (expense: typeof expenses.shared[0]) => void;
   removeExpense: (id: string) => void;
+  notes: Note[];
+  addNote: (note: Omit<Note, "id">) => void;
+  removeNote: (id: string) => void;
 };
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -28,6 +36,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   const [recentGroceries, setRecentGroceries] = useState<string[]>(groceries.items.slice(0, 3));
   const [recentChores, setRecentChores] = useState(chores.tasks.slice(0, 3));
   const [recentExpenses, setRecentExpenses] = useState(expenses.shared.slice(0, 3));
+  const [notes, setNotes] = useState<Note[]>(initialNotes.items);
 
   const toggleTask = (taskId: string) => {
     setCompletedTasks(prev => ({
@@ -78,6 +87,18 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     setRecentExpenses(prev => prev.filter(expense => expense.id !== id));
   };
 
+  const addNote = (note: Omit<Note, "id">) => {
+    const newNote = {
+      ...note,
+      id: Date.now().toString(),
+    };
+    setNotes(prev => [newNote, ...prev]);
+  };
+
+  const removeNote = (id: string) => {
+    setNotes(prev => prev.filter(note => note.id !== id));
+  };
+
   return (
     <TaskContext.Provider value={{
       completedTasks,
@@ -94,6 +115,9 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       addChore,
       addExpense,
       removeExpense,
+      notes,
+      addNote,
+      removeNote,
     }}>
       {children}
     </TaskContext.Provider>

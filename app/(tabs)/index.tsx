@@ -26,6 +26,7 @@ import {
 import Carousel from "react-native-reanimated-carousel";
 import { useTaskContext } from "@/contexts/TaskContext";
 import { useProfileDrawer } from "@/contexts/ProfileDrawerContext";
+import { AddNoteModal } from "@/components/notes/AddNoteModal";
 
 const STICKYNOTESCOLORS = [
   "#FBF8CC",
@@ -112,8 +113,11 @@ export default function HomeScreen() {
     recentChores,
     recentExpenses,
     groceryItems,
+    notes,
+    addNote,
   } = useTaskContext();
   const { showDrawer } = useProfileDrawer();
+  const [isAddNoteModalVisible, setIsAddNoteModalVisible] = useState(false);
 
   // Calculate actual counts
   const todayChoresCount = recentChores.filter(
@@ -145,6 +149,10 @@ export default function HomeScreen() {
     },
   ];
 
+  const handleAddNote = (note: { text: string }) => {
+    addNote(note);
+  };
+
   const quickActionButtons = [
     {
       title: "Expenses",
@@ -171,7 +179,7 @@ export default function HomeScreen() {
       title: "Notes",
       icon: icons.notes,
       iconLib: AntDesign,
-      onPress: () => router.navigate("/groceries"),
+      onPress: () => setIsAddNoteModalVisible(true),
       backgroundColor: colors.notes,
     },
   ];
@@ -246,6 +254,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
+      <AddNoteModal
+        isVisible={isAddNoteModalVisible}
+        onClose={() => setIsAddNoteModalVisible(false)}
+        onAdd={handleAddNote}
+      />
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.headerContainer}>
           <View>
@@ -289,7 +302,7 @@ export default function HomeScreen() {
             width={width}
             height={width / 2}
             autoPlay={false}
-            data={notes.items}
+            data={notes}
             renderItem={({ index, item }) => (
               <View style={styles.carouselItemContainer}>
                 <View
