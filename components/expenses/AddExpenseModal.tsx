@@ -24,19 +24,34 @@ type AddExpenseModalProps = {
   isVisible: boolean;
   onClose: () => void;
   onAdd: (expense: Omit<Expense, "id">) => void;
+  onEdit?: (expense: Expense) => void;
+  initialExpense?: Expense;
 };
 
 export function AddExpenseModal({
   isVisible,
   onClose,
   onAdd,
+  onEdit,
+  initialExpense,
 }: AddExpenseModalProps) {
-  const [amount, setAmount] = useState("");
-  const [title, setTitle] = useState("");
-  const [paidTo, setPaidTo] = useState("");
-  const [paidBy, setPaidBy] = useState<string[]>([]);
-  const [dueDate, setDueDate] = useState(new Date());
-  const [frequency, setFrequency] = useState<Expense["frequency"]>("once");
+  const [amount, setAmount] = useState(initialExpense?.amount || "");
+  const [title, setTitle] = useState(initialExpense?.title || "");
+  const [paidTo, setPaidTo] = useState(initialExpense?.paidTo || "");
+  const [paidBy, setPaidBy] = useState<string[]>(initialExpense?.paidBy || []);
+  const [dueDate, setDueDate] = useState(() => {
+    if (initialExpense?.dueDate) {
+      const parts = initialExpense.dueDate.split("/");
+      if (parts.length === 3) {
+        const [month, day, year] = parts;
+        return new Date(Number(year), Number(month) - 1, Number(day));
+      }
+    }
+    return new Date();
+  });
+  const [frequency, setFrequency] = useState<Expense["frequency"]>(
+    initialExpense?.frequency || "once"
+  );
 
   const [showPaidToModal, setShowPaidToModal] = useState(false);
   const [showPaidByModal, setShowPaidByModal] = useState(false);
@@ -44,6 +59,35 @@ export function AddExpenseModal({
   const [tempDate, setTempDate] = useState(new Date()); // For iOS
 
   const translateY = useRef(new Animated.Value(MODAL_HEIGHT)).current;
+
+  useEffect(() => {
+    if (initialExpense) {
+      setAmount(initialExpense.amount);
+      setTitle(initialExpense.title);
+      setPaidTo(initialExpense.paidTo || "");
+      setPaidBy(initialExpense.paidBy || []);
+      if (initialExpense.dueDate) {
+        const parts = initialExpense.dueDate.split("/");
+        if (parts.length === 3) {
+          const [month, day, year] = parts;
+          setDueDate(new Date(Number(year), Number(month) - 1, Number(day)));
+        }
+      }
+      setFrequency(initialExpense.frequency || "once");
+    }
+  }, [initialExpense]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isVisible) {
+      setAmount("");
+      setTitle("");
+      setPaidTo("");
+      setPaidBy([]);
+      setDueDate(new Date());
+      setFrequency("once");
+    }
+  }, [isVisible]);
 
   const handleFinish = () => {
     const missingFields = [];
@@ -61,16 +105,28 @@ export function AddExpenseModal({
       return;
     }
 
-    onAdd({
-      title,
-      amount,
-      paidTo,
-      paidBy,
-      dueDate: dueDate.toLocaleDateString(),
-      frequency,
-      type: "shared",
-      paidCount: `0/${paidBy.length}`, // Dynamic count based on selected people
-    });
+    if (initialExpense && onEdit) {
+      onEdit({
+        ...initialExpense,
+        amount,
+        title,
+        paidTo,
+        paidBy,
+        dueDate: dueDate.toLocaleDateString(),
+        frequency,
+      });
+    } else {
+      onAdd({
+        title,
+        amount,
+        paidTo,
+        paidBy,
+        dueDate: dueDate.toLocaleDateString(),
+        frequency,
+        type: "shared",
+        paidCount: `0/${paidBy.length}`,
+      });
+    }
 
     // Reset form
     setAmount("");

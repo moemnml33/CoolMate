@@ -18,6 +18,10 @@ type BottomSheetModalProps = {
   title: string;
   onFinish?: () => void;
   finishButtonColor?: string;
+  rightIcon?: {
+    name: keyof typeof Ionicons.glyphMap;
+    onPress: () => void;
+  };
   children: React.ReactNode;
 };
 
@@ -27,6 +31,7 @@ export function BottomSheetModal({
   title,
   onFinish,
   finishButtonColor = "#17C3B2",
+  rightIcon,
   children,
 }: BottomSheetModalProps) {
   const translateY = useRef(new Animated.Value(MODAL_HEIGHT)).current;
@@ -52,12 +57,23 @@ export function BottomSheetModal({
             <Ionicons name="arrow-back" size={24} color="black" />
           </Pressable>
           <ThemedText type="title">{title}</ThemedText>
-          {onFinish && (
+          {rightIcon ? (
+            <Pressable onPress={rightIcon.onPress}>
+              <Ionicons
+                name={rightIcon.name}
+                size={24}
+                color={finishButtonColor}
+              />
+            </Pressable>
+          ) : onFinish ? (
             <Pressable onPress={onFinish}>
-              <ThemedText style={[styles.finishButton, { color: finishButtonColor }]}>
+              <ThemedText
+                style={[styles.finishButton, { color: finishButtonColor }]}>
                 Finish
               </ThemedText>
             </Pressable>
+          ) : (
+            <View style={{ width: 24 }} />
           )}
         </View>
 
@@ -107,5 +123,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    minHeight: MODAL_HEIGHT - 100,
   },
-}); 
+});

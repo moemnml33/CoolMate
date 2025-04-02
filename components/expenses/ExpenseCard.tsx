@@ -14,6 +14,7 @@ type ExpenseCardProps = {
   ownerInfo?: string;
   type: "shared" | "pending";
   onDelete?: (id: string) => void;
+  onPress?: () => void;
 };
 
 export function ExpenseCard({
@@ -25,6 +26,7 @@ export function ExpenseCard({
   ownerInfo,
   type,
   onDelete,
+  onPress,
 }: ExpenseCardProps) {
   const swipeableRef = useRef<Swipeable>(null);
   const [paid, total] = (paidCount || "").split("/").map(Number);
@@ -60,7 +62,7 @@ export function ExpenseCard({
 
   const renderProgressBars = () => {
     if (!total) return null;
-    
+
     return Array.from({ length: total }).map((_, index) => (
       <View
         key={index}
@@ -78,40 +80,46 @@ export function ExpenseCard({
       ref={swipeableRef}
       renderRightActions={renderRightActions}
       rightThreshold={40}>
-      <ThemedView style={styles.card}>
-        <View style={styles.mainContent}>
-          <View style={styles.titleRow}>
-            <ThemedText type="defaultSemiBold">{title}</ThemedText>
-            <ThemedText type="defaultSemiBold" style={{ color: "#17C3B2" }}>${amount}</ThemedText>
-          </View>
-          
-          {type === "shared" && (
-            <>
-              <View style={styles.progressBarContainer}>
-                {renderProgressBars()}
-              </View>
-              <View style={styles.detailsRow}>
-                <View style={styles.dueDate}>
-                  <Ionicons name="calendar" size={16} color="#17C3B2" />
+      <Pressable onPress={onPress}>
+        <ThemedView style={styles.card}>
+          <View style={styles.mainContent}>
+            <View style={styles.titleRow}>
+              <ThemedText type="defaultSemiBold">{title}</ThemedText>
+              <ThemedText type="defaultSemiBold" style={{ color: "#17C3B2" }}>
+                ${amount}
+              </ThemedText>
+            </View>
+
+            {type === "shared" && (
+              <>
+                <View style={styles.progressBarContainer}>
+                  {renderProgressBars()}
+                </View>
+                <View style={styles.detailsRow}>
+                  <View style={styles.dueDate}>
+                    <Ionicons name="calendar" size={16} color="#17C3B2" />
+                    <ThemedText style={styles.smallText}>
+                      due in {dueDate}
+                    </ThemedText>
+                  </View>
                   <ThemedText style={styles.smallText}>
-                    due in {dueDate}
+                    {paidCount} paid
                   </ThemedText>
                 </View>
-                <ThemedText style={styles.smallText}>{paidCount} paid</ThemedText>
-              </View>
-            </>
-          )}
+              </>
+            )}
 
-          {type === "pending" && ownerInfo && (
-            <View style={styles.detailsRow}>
-              <View style={styles.ownerInfo}>
-                <Ionicons name="time" size={16} color="#17C3B2" />
-                <ThemedText style={styles.smallText}>{ownerInfo}</ThemedText>
+            {type === "pending" && ownerInfo && (
+              <View style={styles.detailsRow}>
+                <View style={styles.ownerInfo}>
+                  <Ionicons name="time" size={16} color="#17C3B2" />
+                  <ThemedText style={styles.smallText}>{ownerInfo}</ThemedText>
+                </View>
               </View>
-            </View>
-          )}
-        </View>
-      </ThemedView>
+            )}
+          </View>
+        </ThemedView>
+      </Pressable>
     </Swipeable>
   );
 }
@@ -181,4 +189,4 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
   },
-}); 
+});

@@ -68,7 +68,7 @@ export default function ChoresScreen() {
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <ThemedText type="title">Chores</ThemedText>
-          <Pressable 
+          <Pressable
             style={styles.addButton}
             onPress={() => setIsModalVisible(true)}>
             <Ionicons name="add" size={24} color={colors.chores} />

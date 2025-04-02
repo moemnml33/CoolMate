@@ -12,9 +12,13 @@ import {
   View,
 } from "react-native";
 import { AddExpenseModal } from "@/components/expenses/AddExpenseModal";
+import { ExpenseDetailsModal } from "@/components/expenses/ExpenseDetailsModal";
 
 export default function ExpensesScreen() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [localExpenses, setLocalExpenses] = useState(expenses);
 
   const handleAddExpense = (newExpense: Omit<Expense, "id">) => {
@@ -37,19 +41,72 @@ export default function ExpensesScreen() {
     }));
   };
 
+  const handleExpensePress = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsDetailsModalVisible(true);
+  };
+
+  const handleMarkAsPaid = () => {
+    if (!selectedExpense) return;
+    handleDeleteExpense(selectedExpense.id);
+    setIsDetailsModalVisible(false);
+    setSelectedExpense(null);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalVisible(false);
+    setIsEditing(false);
+    setSelectedExpense(null);
+  };
+
+  const handleEditPress = () => {
+    setIsDetailsModalVisible(false);
+    setIsEditing(true);
+    setIsAddModalVisible(true);
+  };
+
+  const handleEditExpense = (updatedExpense: Expense) => {
+    setLocalExpenses((prev) => ({
+      ...prev,
+      shared: prev.shared.map((expense) =>
+        expense.id === updatedExpense.id ? updatedExpense : expense
+      ),
+      pending: prev.pending.map((expense) =>
+        expense.id === updatedExpense.id ? updatedExpense : expense
+      ),
+    }));
+    handleCloseAddModal();
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <AddExpenseModal
-        isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        isVisible={isAddModalVisible}
+        onClose={handleCloseAddModal}
         onAdd={handleAddExpense}
+        onEdit={handleEditExpense}
+        initialExpense={
+          isEditing && selectedExpense ? selectedExpense : undefined
+        }
       />
+      {selectedExpense && (
+        <ExpenseDetailsModal
+          expense={selectedExpense}
+          isVisible={isDetailsModalVisible}
+          onClose={() => {
+            setIsDetailsModalVisible(false);
+            setSelectedExpense(null);
+          }}
+          onEdit={handleEditPress}
+          onMarkAsPaid={handleMarkAsPaid}
+        />
+      )}
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <ThemedText type="title">Expenses</ThemedText>
           <Pressable
             style={styles.addButton}
-            onPress={() => setIsModalVisible(true)}>
+            onPress={() => setIsAddModalVisible(true)}>
             <Ionicons name="add" size={24} color={colors.expenses} />
           </Pressable>
         </View>
@@ -82,12 +139,9 @@ export default function ExpensesScreen() {
           {localExpenses.shared.map((expense) => (
             <ExpenseCard
               key={expense.id}
-              id={expense.id}
+              {...expense}
               type="shared"
-              title={expense.title}
-              amount={expense.amount}
-              dueDate={expense.dueDate}
-              paidCount={expense.paidCount}
+              onPress={() => handleExpensePress(expense)}
               onDelete={handleDeleteExpense}
             />
           ))}
@@ -100,11 +154,9 @@ export default function ExpensesScreen() {
           {localExpenses.pending.map((expense) => (
             <ExpenseCard
               key={expense.id}
-              id={expense.id}
+              {...expense}
               type="pending"
-              title={expense.title}
-              amount={expense.amount}
-              ownerInfo={expense.ownerInfo}
+              onPress={() => handleExpensePress(expense)}
               onDelete={handleDeleteExpense}
             />
           ))}
