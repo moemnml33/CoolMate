@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { Expense, householdMembers } from "@/data/data";
+import { colors, householdMembers } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useRef, useState } from "react";
@@ -7,50 +7,49 @@ import {
   Animated,
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   TextInput,
   View,
   Alert,
-  Platform,
+  Keyboard,
 } from "react-native";
 import { BottomSheetModal } from "@/components/ui/BottomSheetModal";
-import { colors } from "@/data/data";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.9;
 
-type AddExpenseModalProps = {
+type AddTaskModalProps = {
   isVisible: boolean;
   onClose: () => void;
-  onAdd: (expense: Omit<Expense, "id">) => void;
+  onAdd: (task: {
+    title: string;
+    description?: string;
+    assignedTo: string;
+    dueDate: string;
+  }) => void;
 };
 
-export function AddExpenseModal({
-  isVisible,
-  onClose,
-  onAdd,
-}: AddExpenseModalProps) {
-  const [amount, setAmount] = useState("");
+export function AddTaskModal({ isVisible, onClose, onAdd }: AddTaskModalProps) {
   const [title, setTitle] = useState("");
-  const [paidTo, setPaidTo] = useState("");
-  const [paidBy, setPaidBy] = useState<string[]>([]);
+  const [description, setDescription] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
-  const [frequency, setFrequency] = useState<Expense["frequency"]>("once");
+  const [frequency, setFrequency] = useState<
+    "once" | "daily" | "weekly" | "monthly"
+  >("once");
 
-  const [showPaidToModal, setShowPaidToModal] = useState(false);
-  const [showPaidByModal, setShowPaidByModal] = useState(false);
+  const [showAssigneeModal, setShowAssigneeModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(new Date()); // For iOS
+  const [tempDate, setTempDate] = useState(new Date());
 
   const translateY = useRef(new Animated.Value(MODAL_HEIGHT)).current;
 
   const handleFinish = () => {
     const missingFields = [];
-    if (!amount) missingFields.push("Amount");
     if (!title) missingFields.push("Title");
-    if (!paidTo) missingFields.push("Paid to");
-    if (paidBy.length === 0) missingFields.push("Paid by");
+    if (!assignedTo) missingFields.push("Assign to");
 
     if (missingFields.length > 0) {
       Alert.alert(
@@ -63,23 +62,35 @@ export function AddExpenseModal({
 
     onAdd({
       title,
-      amount,
-      paidTo,
-      paidBy,
-      dueDate: dueDate.toLocaleDateString(),
-      frequency,
-      type: "shared",
-      paidCount: `0/${paidBy.length}`, // Dynamic count based on selected people
+      description,
+      assignedTo,
+      dueDate: formatDueDate(dueDate),
     });
 
     // Reset form
-    setAmount("");
     setTitle("");
-    setPaidTo("");
-    setPaidBy([]);
+    setDescription("");
+    setAssignedTo("");
     setDueDate(new Date());
     setFrequency("once");
     onClose();
+  };
+
+  const formatDueDate = (date: Date) => {
+    const today = new Date();
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      return `due by ${date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    }
+    return `in ${Math.ceil(
+      (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    )} days`;
   };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
@@ -117,22 +128,10 @@ export function AddExpenseModal({
     <BottomSheetModal
       isVisible={isVisible}
       onClose={onClose}
-      title="Add an expense"
+      title="Add a task"
       onFinish={handleFinish}
-      finishButtonColor={colors.expenses}>
+      finishButtonColor={colors.chores}>
       <View style={styles.form}>
-        <View style={styles.amountContainer}>
-          <ThemedText style={styles.currencySymbol}>$</ThemedText>
-          <TextInput
-            style={styles.amountInput}
-            placeholder="0.00"
-            keyboardType="decimal-pad"
-            placeholderTextColor="#999"
-            value={amount}
-            onChangeText={setAmount}
-          />
-        </View>
-
         <View style={styles.inputContainer}>
           <ThemedText style={styles.label}>Title</ThemedText>
           <TextInput
@@ -145,28 +144,31 @@ export function AddExpenseModal({
         </View>
 
         <View style={styles.inputContainer}>
-          <ThemedText style={styles.label}>Paid to</ThemedText>
-          <Pressable
-            style={styles.selectInput}
-            onPress={() => setShowPaidToModal(true)}>
-            <ThemedText
-              style={paidTo ? styles.selectedText : styles.placeholderText}>
-              {paidTo || "(Name)"}
-            </ThemedText>
-            <Ionicons name="chevron-down" size={20} color="#999" />
-          </Pressable>
+          <ThemedText style={styles.label}>Description</ThemedText>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Description"
+            placeholderTextColor="#999"
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === "Enter") {
+                Keyboard.dismiss();
+              }
+            }}
+            numberOfLines={3}
+          />
         </View>
 
         <View style={styles.inputContainer}>
-          <ThemedText style={styles.label}>Paid by</ThemedText>
+          <ThemedText style={styles.label}>Assign to</ThemedText>
           <Pressable
             style={styles.selectInput}
-            onPress={() => setShowPaidByModal(true)}>
+            onPress={() => setShowAssigneeModal(true)}>
             <ThemedText
-              style={
-                paidBy.length ? styles.selectedText : styles.placeholderText
-              }>
-              {paidBy.length ? paidBy.join(", ") : "(Name(s))"}
+              style={assignedTo ? styles.selectedText : styles.placeholderText}>
+              {assignedTo || "(Name)"}
             </ThemedText>
             <Ionicons name="add" size={20} color="#999" />
           </Pressable>
@@ -178,7 +180,7 @@ export function AddExpenseModal({
             style={styles.selectInput}
             onPress={() => setShowDatePicker(true)}>
             <ThemedText style={styles.selectedText}>
-              {dueDate.toLocaleDateString()}
+              {formatDueDate(dueDate)}
             </ThemedText>
             <Ionicons name="calendar" size={20} color="#999" />
           </Pressable>
@@ -205,56 +207,24 @@ export function AddExpenseModal({
         </View>
       </View>
 
-      {/* Selection Modals */}
-      <Modal visible={showPaidToModal} animationType="slide" transparent>
+      {/* Selection Modal */}
+      <Modal visible={showAssigneeModal} animationType="slide" transparent>
         <View style={styles.selectionModal}>
           <View style={styles.selectionContent}>
             <ThemedText type="subtitle" style={styles.selectionTitle}>
-              Select who was paid
+              Select assignee
             </ThemedText>
             {householdMembers.map((member) => (
               <Pressable
                 key={member}
                 style={styles.selectionItem}
                 onPress={() => {
-                  setPaidTo(member);
-                  setShowPaidToModal(false);
+                  setAssignedTo(member);
+                  setShowAssigneeModal(false);
                 }}>
                 <ThemedText>{member}</ThemedText>
               </Pressable>
             ))}
-          </View>
-        </View>
-      </Modal>
-
-      <Modal visible={showPaidByModal} animationType="slide" transparent>
-        <View style={styles.selectionModal}>
-          <View style={styles.selectionContent}>
-            <ThemedText type="subtitle" style={styles.selectionTitle}>
-              Select who paid
-            </ThemedText>
-            {householdMembers.map((member) => (
-              <Pressable
-                key={member}
-                style={[
-                  styles.selectionItem,
-                  paidBy.includes(member) && styles.selectionItemSelected,
-                ]}
-                onPress={() => {
-                  setPaidBy((prev) =>
-                    prev.includes(member)
-                      ? prev.filter((m) => m !== member)
-                      : [...prev, member]
-                  );
-                }}>
-                <ThemedText>{member}</ThemedText>
-              </Pressable>
-            ))}
-            <Pressable
-              style={styles.doneButton}
-              onPress={() => setShowPaidByModal(false)}>
-              <ThemedText style={styles.doneButtonText}>Done</ThemedText>
-            </Pressable>
           </View>
         </View>
       </Modal>
@@ -300,22 +270,6 @@ const styles = StyleSheet.create({
   form: {
     gap: 24,
   },
-  amountContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    marginBottom: 8,
-  },
-  currencySymbol: {
-    fontSize: 32,
-    color: "#999",
-  },
-  amountInput: {
-    fontSize: 32,
-    minWidth: 100,
-    textAlign: "center",
-  },
   inputContainer: {
     gap: 8,
   },
@@ -330,6 +284,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
   },
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+    paddingTop: 12,
+  },
   selectInput: {
     height: 48,
     borderRadius: 8,
@@ -341,6 +300,10 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: "#999",
+    fontSize: 16,
+  },
+  selectedText: {
+    color: "#000",
     fontSize: 16,
   },
   frequencyContainer: {
@@ -359,11 +322,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   frequencyOptionSelected: {
-    backgroundColor: "#17C3B2",
+    backgroundColor: colors.chores,
   },
-  selectedText: {
-    color: "#000",
-    fontSize: 16,
+  frequencyOptionSelectedText: {
+    color: "white",
   },
   selectionModal: {
     flex: 1,
@@ -384,23 +346,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
   },
-  selectionItemSelected: {
-    backgroundColor: "#E8F8F7",
-  },
-  doneButton: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: "#17C3B2",
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  doneButtonText: {
-    color: "white",
-    fontWeight: "600",
-  },
-  frequencyOptionSelectedText: {
-    color: "white",
-  },
   datePickerModal: {
     flex: 1,
     justifyContent: "flex-end",
@@ -418,7 +363,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   datePickerButton: {
-    color: "#17C3B2",
+    color: colors.chores,
     fontSize: 16,
     fontWeight: "600",
   },

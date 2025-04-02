@@ -2,15 +2,41 @@ import { ThemedText } from "@/components/ThemedText";
 import { chores, colors } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { useTaskContext } from "@/contexts/TaskContext";
+import { AddTaskModal } from "@/components/tasks/AddTaskModal";
 
 export default function ChoresScreen() {
   const { completedTasks, toggleTask } = useTaskContext();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [localTasks, setLocalTasks] = useState(chores.tasks);
 
-  const renderTask = (task: typeof chores.tasks[0]) => (
-    <View key={task.id} style={[styles.taskCard, !task.isToday && styles.upcomingTask]}>
+  const handleAddTask = (newTask: {
+    title: string;
+    description?: string;
+    assignedTo: string;
+    dueDate: string;
+  }) => {
+    const taskWithId = {
+      ...newTask,
+      id: Date.now().toString(),
+      isToday: newTask.dueDate.includes("due by"),
+    };
+
+    setLocalTasks((prev) => [...prev, taskWithId]);
+  };
+
+  const renderTask = (task: (typeof chores.tasks)[0]) => (
+    <View
+      key={task.id}
+      style={[styles.taskCard, !task.isToday && styles.upcomingTask]}>
       <View style={styles.taskLeft}>
         <Checkbox
           checked={completedTasks[task.id] || false}
@@ -25,21 +51,26 @@ export default function ChoresScreen() {
           </View>
         </View>
       </View>
-      {task.isToday && (
-        <View style={styles.avatar} />
-      )}
+      {task.isToday && <View style={styles.avatar} />}
     </View>
   );
 
-  const todayTasks = chores.tasks.filter(task => task.isToday);
-  const upcomingTasks = chores.tasks.filter(task => !task.isToday);
+  const todayTasks = localTasks.filter((task) => task.isToday);
+  const upcomingTasks = localTasks.filter((task) => !task.isToday);
 
   return (
     <SafeAreaView style={styles.mainContainer}>
+      <AddTaskModal
+        isVisible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onAdd={handleAddTask}
+      />
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <ThemedText type="title">Chores</ThemedText>
-          <Pressable style={styles.addButton}>
+          <Pressable 
+            style={styles.addButton}
+            onPress={() => setIsModalVisible(true)}>
             <Ionicons name="add" size={24} color={colors.chores} />
           </Pressable>
         </View>
