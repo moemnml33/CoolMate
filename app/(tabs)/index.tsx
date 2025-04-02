@@ -12,7 +12,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -25,6 +25,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { useTaskContext } from "@/contexts/TaskContext";
+import { useProfileDrawer } from "@/contexts/ProfileDrawerContext";
 
 const STICKYNOTESCOLORS = [
   "#FBF8CC",
@@ -105,6 +106,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
   const { completedTasks, checkedGroceries } = useTaskContext();
+  const { showDrawer } = useProfileDrawer();
 
   // Calculate actual counts
   const todayChoresCount = chores.tasks.filter(
@@ -247,7 +249,7 @@ export default function HomeScreen() {
               {user.household}
             </ThemedText>
           </View>
-          <Pressable>
+          <Pressable onPress={showDrawer}>
             <Ionicons name="person-circle" size={44} />
           </Pressable>
         </View>

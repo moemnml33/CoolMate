@@ -3,7 +3,24 @@ export const user = {
   household: "The Smith Family",
 };
 
-export const expenses = {
+export type Expense = {
+  id: string;
+  title: string;
+  amount: string;
+  dueDate?: string;
+  paidCount?: string;
+  ownerInfo?: string;
+  paidTo?: string;
+  paidBy?: string[];
+  frequency?: "once" | "daily" | "weekly" | "monthly";
+  type: "shared" | "pending";
+};
+
+export const expenses: {
+  balances: { youOwe: number; youAreOwed: number };
+  shared: Expense[];
+  pending: Expense[];
+} = {
   balances: {
     youOwe: 413.50,
     youAreOwed: 55.60,
@@ -110,4 +127,6 @@ export const icons = {
   expenses: "cash",
   groceries: "bag",
   notes: "pushpin",
-}; 
+};
+
+export const householdMembers = ["Alex", "Jessica", "Mark", "Daniel"]; 

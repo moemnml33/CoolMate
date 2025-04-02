@@ -12,7 +12,9 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
-import { TaskProvider } from '@/contexts/TaskContext';
+import { TaskProvider } from "@/contexts/TaskContext";
+import { ProfileDrawerProvider } from "@/contexts/ProfileDrawerContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 Appearance.setColorScheme("light"); // Force light mode
 
@@ -36,14 +38,19 @@ export default function RootLayout() {
   }
 
   return (
-    <TaskProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </TaskProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <TaskProvider>
+        <ProfileDrawerProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </ProfileDrawerProvider>
+      </TaskProvider>
+    </GestureHandlerRootView>
   );
 }
