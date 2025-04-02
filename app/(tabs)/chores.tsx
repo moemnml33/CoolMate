@@ -14,7 +14,7 @@ import { useTaskContext } from "@/contexts/TaskContext";
 import { AddTaskModal } from "@/components/tasks/AddTaskModal";
 
 export default function ChoresScreen() {
-  const { completedTasks, toggleTask } = useTaskContext();
+  const { completedTasks, toggleTask, addChore } = useTaskContext();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [localTasks, setLocalTasks] = useState(chores.tasks);
 
@@ -31,6 +31,7 @@ export default function ChoresScreen() {
     };
 
     setLocalTasks((prev) => [...prev, taskWithId]);
+    addChore(taskWithId);
   };
 
   const renderTask = (task: (typeof chores.tasks)[0]) => (

@@ -13,8 +13,10 @@ import {
 } from "react-native";
 import { AddExpenseModal } from "@/components/expenses/AddExpenseModal";
 import { ExpenseDetailsModal } from "@/components/expenses/ExpenseDetailsModal";
+import { useTaskContext } from "@/contexts/TaskContext";
 
 export default function ExpensesScreen() {
+  const { addExpense, removeExpense } = useTaskContext();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -31,6 +33,7 @@ export default function ExpensesScreen() {
       ...prev,
       shared: [...prev.shared, expenseWithId],
     }));
+    addExpense(expenseWithId);
   };
 
   const handleDeleteExpense = (id: string) => {
@@ -39,6 +42,7 @@ export default function ExpensesScreen() {
       shared: prev.shared.filter((expense) => expense.id !== id),
       pending: prev.pending.filter((expense) => expense.id !== id),
     }));
+    removeExpense(id);
   };
 
   const handleExpensePress = (expense: Expense) => {
@@ -75,6 +79,7 @@ export default function ExpensesScreen() {
         expense.id === updatedExpense.id ? updatedExpense : expense
       ),
     }));
+    addExpense(updatedExpense);
     handleCloseAddModal();
   };
 

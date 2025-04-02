@@ -2,12 +2,33 @@ import { ThemedText } from "@/components/ThemedText";
 import { groceries, colors } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  TextInput,
+} from "react-native";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { useTaskContext } from "@/contexts/TaskContext";
 
 export default function GroceriesScreen() {
-  const { checkedGroceries, toggleGroceryItem, clearGroceryList, markAllGroceries } = useTaskContext();
+  const {
+    checkedGroceries,
+    toggleGroceryItem,
+    clearGroceryList,
+    markAllGroceries,
+    groceryItems,
+    addGroceryItem,
+  } = useTaskContext();
+  const [newItem, setNewItem] = useState("");
+
+  const handleAddItem = () => {
+    if (!newItem.trim()) return;
+    addGroceryItem(newItem.trim());
+    setNewItem("");
+  };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -20,25 +41,39 @@ export default function GroceriesScreen() {
         </View>
 
         <View style={styles.actionButtons}>
-          <Pressable 
-            style={[styles.actionButton, styles.markAllButton]} 
-            onPress={markAllGroceries}
-          >
-            <ThemedText style={{ color: "white" }}>Mark all complete</ThemedText>
+          <Pressable
+            style={[styles.actionButton, styles.clearButton]}
+            onPress={clearGroceryList}>
+            <ThemedText style={{ color: colors.groceries }}>
+              Clear list
+            </ThemedText>
           </Pressable>
-          <Pressable 
-            style={[styles.actionButton, styles.clearButton]} 
-            onPress={clearGroceryList}
-          >
-            <ThemedText style={{ color: colors.groceries }}>Clear list</ThemedText>
+          <Pressable
+            style={[styles.actionButton, styles.markAllButton]}
+            onPress={markAllGroceries}>
+            <ThemedText style={{ color: "white" }}>Mark as complete</ThemedText>
           </Pressable>
         </View>
 
-        <View style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Shopping List
-          </ThemedText>
-          {groceries.items.map((item) => (
+        <ThemedText type="subtitle" style={styles.sectionTitle}>
+          Shopping List
+        </ThemedText>
+
+        <View style={styles.list}>
+          <View style={styles.groceryItem}>
+            <View style={[styles.checkbox, { borderColor: "#CED4DA" }]} />
+            <TextInput
+              style={styles.input}
+              placeholder="Add new..."
+              value={newItem}
+              onChangeText={setNewItem}
+              onSubmitEditing={handleAddItem}
+              returnKeyType="done"
+              placeholderTextColor="#ADB5BD"
+            />
+          </View>
+
+          {groceryItems.map((item) => (
             <View key={item} style={styles.groceryItem}>
               <Checkbox
                 checked={checkedGroceries[item] || false}
@@ -99,11 +134,29 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 16,
   },
+  list: {
+    backgroundColor: "white",
+    borderRadius: 12,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#212529",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+  },
   groceryItem: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E9ECEF",
   },
   groceryText: {
     fontSize: 16,

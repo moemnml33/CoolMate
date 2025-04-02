@@ -105,15 +105,22 @@ const groceryItems = [
 export default function HomeScreen() {
   const router = useRouter();
   const width = Dimensions.get("window").width;
-  const { completedTasks, checkedGroceries } = useTaskContext();
+  const {
+    completedTasks,
+    checkedGroceries,
+    recentGroceries,
+    recentChores,
+    recentExpenses,
+    groceryItems,
+  } = useTaskContext();
   const { showDrawer } = useProfileDrawer();
 
   // Calculate actual counts
-  const todayChoresCount = chores.tasks.filter(
+  const todayChoresCount = recentChores.filter(
     (task) => task.isToday && !completedTasks[task.id]
   ).length;
 
-  const uncheckedGroceriesCount = groceries.items.filter(
+  const uncheckedGroceriesCount = groceryItems.filter(
     (item) => !checkedGroceries[item]
   ).length;
 
@@ -126,7 +133,7 @@ export default function HomeScreen() {
     },
     {
       id: "2",
-      text: "You have 2 expenses to log",
+      text: `You have ${recentExpenses.length} expenses to log`,
       icon: icons.expenses,
       type: "expenses",
     },
@@ -229,13 +236,11 @@ export default function HomeScreen() {
     </View>
   );
 
-  const renderGroceryItem = ({ item }: any) => (
+  const renderGroceryItem = ({ item }: { item: string }) => (
     <View style={styles.widgetItem}>
       <View style={styles.widgetItemLeft}>
-        <Text style={styles.widgetItemDescription}>{item.item}</Text>
-        <Text style={styles.widgetItemSubtext}>{item.category}</Text>
+        <Text style={styles.widgetItemDescription}>{item}</Text>
       </View>
-      <Text style={styles.widgetItemAmount}>{item.quantity}</Text>
     </View>
   );
 
@@ -339,9 +344,9 @@ export default function HomeScreen() {
             </ThemedText>
             <View style={styles.widgetContentContainer}>
               <FlatList
-                data={groceryItems}
+                data={recentGroceries}
                 renderItem={renderGroceryItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item}
                 scrollEnabled={false}
                 ItemSeparatorComponent={() => (
                   <View style={styles.overviewSeparator} />
