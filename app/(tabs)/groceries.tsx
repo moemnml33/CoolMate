@@ -9,6 +9,7 @@ import {
   StyleSheet,
   View,
   TextInput,
+  Alert,
 } from "react-native";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { useTaskContext } from "@/contexts/TaskContext";
@@ -30,6 +31,24 @@ export default function GroceriesScreen() {
     setNewItem("");
   };
 
+  const handleClearList = () => {
+    Alert.alert(
+      "Clear Grocery List",
+      "Are you sure you want to clear the entire grocery list?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Clear",
+          onPress: clearGroceryList,
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView style={styles.scrollView}>
@@ -43,7 +62,7 @@ export default function GroceriesScreen() {
         <View style={styles.actionButtons}>
           <Pressable
             style={[styles.actionButton, styles.clearButton]}
-            onPress={clearGroceryList}>
+            onPress={handleClearList}>
             <ThemedText style={{ color: colors.groceries }}>
               Clear list
             </ThemedText>
