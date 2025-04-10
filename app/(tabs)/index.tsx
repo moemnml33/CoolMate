@@ -27,6 +27,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { useTaskContext } from "@/contexts/TaskContext";
 import { useProfileDrawer } from "@/contexts/ProfileDrawerContext";
 import { AddNoteModal } from "@/components/notes/AddNoteModal";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 const STICKYNOTESCOLORS = [
   "#FBF8CC",
@@ -115,6 +116,7 @@ export default function HomeScreen() {
     groceryItems,
     notes,
     addNote,
+    toggleGroceryItem,
   } = useTaskContext();
   const { showDrawer } = useProfileDrawer();
   const [isAddNoteModalVisible, setIsAddNoteModalVisible] = useState(false);
@@ -356,15 +358,22 @@ export default function HomeScreen() {
               Grocery Items
             </ThemedText>
             <View style={styles.widgetContentContainer}>
-              <FlatList
-                data={recentGroceries}
-                renderItem={renderGroceryItem}
-                keyExtractor={(item) => item}
-                scrollEnabled={false}
-                ItemSeparatorComponent={() => (
-                  <View style={styles.overviewSeparator} />
-                )}
-              />
+              {groceryItems.length > 0 ? (
+                groceryItems.slice(0, 3).map((item) => (
+                  <View key={item} style={styles.groceryItem}>
+                    <Checkbox
+                      checked={checkedGroceries[item] || false}
+                      onPress={() => toggleGroceryItem(item)}
+                      color={colors.groceries}
+                    />
+                    <ThemedText>{item}</ThemedText>
+                  </View>
+                ))
+              ) : (
+                <ThemedText style={styles.emptyText}>
+                  No grocery items in list
+                </ThemedText>
+              )}
             </View>
           </View>
         </View>
@@ -519,5 +528,10 @@ const styles = StyleSheet.create({
   widgetItemAmount: {
     fontSize: 14,
     fontWeight: "bold",
+  },
+  emptyText: {
+    color: "#687076",
+    textAlign: "center",
+    padding: 16,
   },
 });
