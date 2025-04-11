@@ -1,7 +1,9 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { AddExpenseModal } from "@/components/expenses/AddExpenseModal";
 import { ExpenseCard } from "@/components/expenses/ExpenseCard";
-import { expenses, colors, Expense } from "@/data/data";
+import { ExpenseDetailsModal } from "@/components/expenses/ExpenseDetailsModal";
+import { useTaskContext } from "@/contexts/TaskContext";
+import { colors, Expense, expenses } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
 import {
@@ -11,9 +13,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { AddExpenseModal } from "@/components/expenses/AddExpenseModal";
-import { ExpenseDetailsModal } from "@/components/expenses/ExpenseDetailsModal";
-import { useTaskContext } from "@/contexts/TaskContext";
 
 export default function ExpensesScreen() {
   const { addExpense, removeExpense } = useTaskContext();
@@ -111,14 +110,16 @@ export default function ExpensesScreen() {
           <ThemedText type="title">Expenses</ThemedText>
           <Pressable
             style={styles.addButton}
-            onPress={() => setIsAddModalVisible(true)}>
+            onPress={() => setIsAddModalVisible(true)}
+          >
             <Ionicons name="add" size={24} color={colors.expenses} />
           </Pressable>
         </View>
 
         <View style={styles.balanceContainer}>
           <View
-            style={[styles.balanceCard, { backgroundColor: colors.expenses }]}>
+            style={[styles.balanceCard, { backgroundColor: colors.expenses }]}
+          >
             <ThemedText style={[styles.balanceLabel, { color: "white" }]}>
               You owe
             </ThemedText>
@@ -127,7 +128,8 @@ export default function ExpensesScreen() {
             </ThemedText>
           </View>
           <View
-            style={[styles.balanceCard, { backgroundColor: colors.expenses }]}>
+            style={[styles.balanceCard, { backgroundColor: colors.expenses }]}
+          >
             <ThemedText style={[styles.balanceLabel, { color: "white" }]}>
               You are owed
             </ThemedText>

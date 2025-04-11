@@ -1,18 +1,18 @@
 import { ThemedText } from "@/components/ThemedText";
-import { groceries, colors } from "@/data/data";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { useTaskContext } from "@/contexts/TaskContext";
+import { colors } from "@/data/data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
 import {
+  Alert,
   Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  View,
   TextInput,
-  Alert,
+  View,
 } from "react-native";
-import { Checkbox } from "@/components/ui/Checkbox";
-import { useTaskContext } from "@/contexts/TaskContext";
 
 export default function GroceriesScreen() {
   const {
@@ -62,14 +62,16 @@ export default function GroceriesScreen() {
         <View style={styles.actionButtons}>
           <Pressable
             style={[styles.actionButton, styles.clearButton]}
-            onPress={handleClearList}>
+            onPress={handleClearList}
+          >
             <ThemedText style={{ color: colors.groceries }}>
               Clear list
             </ThemedText>
           </Pressable>
           <Pressable
             style={[styles.actionButton, styles.markAllButton]}
-            onPress={markAllGroceries}>
+            onPress={markAllGroceries}
+          >
             <ThemedText style={{ color: "white" }}>Mark as complete</ThemedText>
           </Pressable>
         </View>

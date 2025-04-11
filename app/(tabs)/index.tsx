@@ -1,13 +1,9 @@
+import { AddNoteModal } from "@/components/notes/AddNoteModal";
 import { ThemedText } from "@/components/ThemedText";
-import {
-  user,
-  overview,
-  notes,
-  colors,
-  icons,
-  chores,
-  groceries,
-} from "@/data/data";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { useProfileDrawer } from "@/contexts/ProfileDrawerContext";
+import { useTaskContext } from "@/contexts/TaskContext";
+import { colors, icons, user } from "@/data/data";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -24,10 +20,6 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { useTaskContext } from "@/contexts/TaskContext";
-import { useProfileDrawer } from "@/contexts/ProfileDrawerContext";
-import { AddNoteModal } from "@/components/notes/AddNoteModal";
-import { Checkbox } from "@/components/ui/Checkbox";
 
 const STICKYNOTESCOLORS = [
   "#FBF8CC",
@@ -213,7 +205,8 @@ export default function HomeScreen() {
           { backgroundColor: item.backgroundColor },
           pressed && styles.buttonPressed,
         ]}
-        onPress={item.onPress}>
+        onPress={item.onPress}
+      >
         <item.iconLib name={item.icon as any} size={24} color="white" />
       </Pressable>
       <Text style={{ paddingTop: 4 }}>{item.title}</Text>
@@ -229,7 +222,8 @@ export default function HomeScreen() {
             backgroundColor:
               buttonsColors[item.type as keyof typeof buttonsColors],
           },
-        ]}>
+        ]}
+      >
         {getIconComponent(item.icon)}
       </View>
       <ThemedText style={styles.overviewText}>{item.text}</ThemedText>
@@ -314,7 +308,8 @@ export default function HomeScreen() {
                       backgroundColor:
                         STICKYNOTESCOLORS[index % STICKYNOTESCOLORS.length],
                     },
-                  ]}>
+                  ]}
+                >
                   <Text style={styles.noteText}>{item.text}</Text>
                 </View>
               </View>
@@ -357,24 +352,30 @@ export default function HomeScreen() {
             <ThemedText type="subtitle" style={styles.subtitles}>
               Grocery Items
             </ThemedText>
-            <View style={styles.widgetContentContainer}>
-              {groceryItems.length > 0 ? (
-                groceryItems.slice(0, 3).map((item) => (
-                  <View key={item} style={styles.groceryItem}>
-                    <Checkbox
-                      checked={checkedGroceries[item] || false}
-                      onPress={() => toggleGroceryItem(item)}
-                      color={colors.groceries}
-                    />
-                    <ThemedText>{item}</ThemedText>
-                  </View>
-                ))
-              ) : (
+            <FlatList
+              data={groceryItems.slice(0, 3)}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <View style={styles.widgetItem}>
+                  <Checkbox
+                    checked={checkedGroceries[item] || false}
+                    onPress={() => toggleGroceryItem(item)}
+                    color={colors.groceries}
+                  />
+                  <ThemedText>{item}</ThemedText>
+                </View>
+              )}
+              ListEmptyComponent={
                 <ThemedText style={styles.emptyText}>
                   No grocery items in list
                 </ThemedText>
+              }
+              contentContainerStyle={styles.widgetContentContainer}
+              scrollEnabled={false}
+              ItemSeparatorComponent={() => (
+                <View style={styles.overviewSeparator} />
               )}
-            </View>
+            />
           </View>
         </View>
       </ScrollView>
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
   },
   widgetItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: "4%",
     paddingHorizontal: "4%",
